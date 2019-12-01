@@ -43,9 +43,9 @@ a{
   text-decoration:none;
   color:inherit;
 }
-// a:hover{
+a:hover{
 
-// }
+}
 em,i{
   font-style: normal;
 }
