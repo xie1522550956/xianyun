@@ -94,6 +94,9 @@ export default {
     },
     handleOption(index) {
       this.currentOption = index;
+      if(index ==2) {
+        this.$router.push('/air')
+      }
     }
   }
 };
