@@ -10,10 +10,18 @@ export const state = () => ({
 export const mutations = {
     setUserinfo(state, data) {
         state.userInfo = data
+    },
+    cleanUserInfo(state){
+        localStorage.removeItem('vuex')
+        state.userInfo =  {
+            token: "",
+            user: {},
+        }
     }
 };
 
 export const actions = {
+    // 登录
     login({commit}, data){
         return this.$axios({
             url:'/accounts/login',
@@ -22,7 +30,7 @@ export const actions = {
         })
         .then(res => {
             const data= res.data
-            commit('setUserinfo', data)
+            return data
         })
     }
 };

@@ -51,7 +51,15 @@
 export default {
     methods: {
         // 用户退出
-        handleLogout(){},
+        handleLogout(){
+            this.$store.commit('user/cleanUserInfo')
+            if(!localStorage.getItem('vuex')) {
+                this.$message({
+                    message: "用户退出登录成功!",
+                    type: "success"
+				})
+            }
+        },
     }
 }
 </script>

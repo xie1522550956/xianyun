@@ -51,8 +51,8 @@ export default {
 			},
 			tab: 0,
 			userinfo: {
-				username: '',
-				password: ''
+				username: '13800138000',
+				password: '123456'
 			}
     };
   },
@@ -76,8 +76,8 @@ export default {
               message: "登录成功，正在跳转",
               type: "success"
 						})
-						console.log(this.$store.state.user.userInfo)
 						setTimeout(() => {
+              this.$store.commit('user/setUserinfo', res)
               this.$router.replace("/")
             }, 1000);
 					})
