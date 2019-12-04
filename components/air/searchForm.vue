@@ -18,6 +18,7 @@
                 placeholder="请搜索出发城市"
                 @select="handleDepartSelect"
                 class="el-autocomplete"
+                :highlight-first-item='true'
                 ></el-autocomplete>
       </el-form-item>
       <el-form-item label="到达城市">
@@ -30,6 +31,7 @@
           placeholder="请搜索到达城市"
           @select="handleDestSelect"
           class="el-autocomplete"
+          :highlight-first-item='true'
         ></el-autocomplete>
       </el-form-item>
       <el-form-item label="出发时间">
@@ -47,6 +49,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   data() {
     return {
@@ -84,49 +87,44 @@ export default {
     // ];
     // cb(arr);
     // },
-
     async queryDepartSearch(value, cb) {
         this.departval = value
       const arr = await this.querySearchAsync(value);
       if (arr.length > 0) {
-        // 不在下拉列表中选择，则默认选择第一项
-        this.form.departCity = arr[0].value;
         this.form.departCode = arr[0].sort;
       }
-      console.log(arr);
-
       cb(arr);
     },
-
     // 目标城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列表
     async queryDestSearch(value, cb) {
+      let arr = []
     //   const arr = await this.querySearchAsync(value);
-        const res = await this.$axios({
+    if(!value == '') {
+      const res = await this.$axios({
             url:'/airs/city',
             params:{
                 name: value
             }
         })
-        console.log(res)
-      if (res.data.data.length > 0) {
-        // 不在下拉列表中选择，则默认选择第一项
-        this.form.destCity = res.data.data[0].value
+         if (res.data.data.length > 0) {
         this.form.destCode = res.data.data[0].sort
-      }
-      let arr = res.data.data.map(v=>{
+          arr = res.data.data.map(v=>{
           return {
               ...v,
               value:v.name.replace("市", "")
           }
-
+          // 过滤掉没有sort属性的数据
+          arr = arr.filter(e => e.sort)
       })
+      }
+    }
+      // 因为回调函数生成的列表项的值是根据数组中数据的value的  所以数组中的数据需要有value属性
       cb(arr);
     },
 
     // 出发城市下拉选择时触发
     handleDepartSelect(item) {
-        console.log(item)
         this.form.departCity = item.value;
         this.form.departCode = item.sort;
     },
@@ -138,7 +136,6 @@ export default {
         if (!queryString) {
           return resolve([]);
         }
-
         this.$axios({
           url: `/airs/city`,
           params: {
@@ -146,7 +143,6 @@ export default {
           }
         }).then(res => {
           const { data } = res.data;
-
           // 下拉提示列表必须要有value字段
           const arr = data.map(v => {
             return {
@@ -154,28 +150,42 @@ export default {
               value: v.name.replace("市", "")
             };
           });
-          resolve(arr);
+          let brr = arr.filter(e=> e.sort)
+          resolve(brr);
         });
       });
     },
 
     // 目标城市下拉选择时触发
     handleDestSelect(item) {
-        console.log(item)
         this.form.destCity = item.value;
         this.form.destCode = item.sort;
-        console.log(this.form)
     },
 
     // 确认选择日期时触发
-    handleDate(value) {},
-
+    handleDate(value) {
+      this.form.departDate = moment(this.form.departDate).format('YYYY-MM-DD')
+    },
     // 触发和目标城市切换时触发
-    handleReverse() {},
+    handleReverse() {
+      const {destCity, departCity, destCode, departCode} = this.form
+      this.form.destCity = departCity
+      this.form.departCity = destCity
+      this.form.destCode = departCode
+      this.form.departCode = destCode
+    },
 
     // 提交表单是触发
     handleSubmit() {
       console.log(this.form);
+      for(let key in this.form){
+        if(!this.form[key]) return this.$message.error('选项不能有空!');
+      }
+      
+      this.$router.push({
+        path: '/air/flights',
+        query: this.form
+      })
     }
   },
   mounted() {}
