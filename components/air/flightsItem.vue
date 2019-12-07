@@ -1,6 +1,6 @@
 <template>
-  <div class="flight-item" @click='showlist'>
-    <div >
+  <div class="flight-item" >
+    <div @click='showlist'>
       <!-- 显示的机票信息 -->
       <el-row type="flex" align="middle" class="flight-info">
         <el-col :span="6">
@@ -14,7 +14,7 @@
               <span>{{flight.org_airport_name + flight.org_airport_quay}}</span>
             </el-col>
             <el-col :span="8" class="flight-time">
-              <span>2时20分</span>
+              <span>{{duration}}</span>
             </el-col>
             <el-col :span="8" class="flight-airport">
               <strong>{{flight.arr_time}}</strong>
@@ -59,16 +59,36 @@
 
 <script>
 export default {
-  props: ["flight"],
+  props: ["flight",'index','setindex'],
   data () {
     return {
       showlists: false
     }
   },
+  mounted () {
+    console.log(this.index)
+  },
+  watch: {
+    setindex(){
+      if(this.setindex != this.index) {
+        this.showlists = false
+      }
+    }
+  },
   methods: {
     showlist(){
-      console.log(1)
       this.showlists = !this.showlists
+      
+      this.$emit('itemindex',this.index)
+    }
+  },
+  computed: {
+    duration(){
+      let arrdate = new Date(this.flight.arr_datetime).getTime()
+      let depdate = new Date(this.flight.dep_datetime).getTime()
+      let duration = arrdate-depdate
+      if(duration<0) duration+=24*60*60*1000
+      return Math.floor(duration/1000/60/60)+'小时'+duration/1000/60%60+'分钟'
     }
   }
 };
