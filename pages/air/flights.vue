@@ -1,6 +1,8 @@
 <template>
-  <div class="flights">
-    <FlightsFilters :flightsData="flights" @setFlightsData="setFlightsData"></FlightsFilters>
+  <section class="contianer">
+    <el-row type="flex" justify="space-between">
+    <div class="flights-content">
+      <FlightsFilters :flightsData="flights" @setFlightsData="setFlightsData"></FlightsFilters>
     <flightsListHead></flightsListHead>
     <flightsItem
       v-for="(value,index) in flightsitem"
@@ -19,13 +21,22 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
-  </div>
+    
+    </div>
+     <!-- 航班信息 -->
+    <div class="aside">
+      <FlightsAside></FlightsAside>
+    </div>
+  
+  </el-row>
+  </section>
 </template>
 
 <script>
 import flightsListHead from "@/components/air/flightsListHead";
 import flightsItem from "@/components/air/flightsItem";
 import FlightsFilters from "@/components/air/flightsFilters";
+import FlightsAside from "@/components/air/flightsAside";
 export default {
   data() {
     return {
@@ -58,7 +69,8 @@ export default {
   components: {
     flightsListHead,
     flightsItem,
-    FlightsFilters
+    FlightsFilters,
+    FlightsAside
   },
   methods: {
     setshowitem(index) {

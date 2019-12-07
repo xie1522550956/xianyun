@@ -181,7 +181,8 @@ export default {
       for(let key in this.form){
         if(!this.form[key]) return this.$message.error('选项不能有空!');
       }
-      
+      this.$store.commit('jipiao/setjipiao', this.form)
+      console.log(this.$store.state.jipiao.jipiaoitem)
       this.$router.push({
         path: '/air/flights',
         query: this.form
